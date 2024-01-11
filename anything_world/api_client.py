@@ -140,6 +140,7 @@ class AWClient:
             model_id: str,
             expected_stage: str,
             waiting_time: Optional[int] = 5,
+            warmup_time: Optional[int] = 0,
             verbose: Optional[bool] = False) -> dict:
         """
         Retrieves a model by polling until it reaches the expected stage.
@@ -150,10 +151,15 @@ class AWClient:
         :param model_id: str, the ID of the model to retrieve.
         :param expected_stage: str, the stage that the model is expected to reach.
         :param waiting_time: int, optional, the amount of time to wait between each request in seconds. Defaults to 5.
+        :param warmup_time: int, optional, the amount of time to wait before sending the first request in seconds.
+            This is useful specially for users with low connectivity, to avoid unnecessary requests, given that for
+            some models the API takes a while to the model ready. Defaults to 0.  
         :param verbose: bool, optional, a flag indicating whether to print detailed information about each request.
             Defaults to False.
         :return: dict, the JSON response from the API decoded as a dict.
         """
+        if warmup_time > 0:
+            await asyncio.sleep(warmup_time)
         attempt_count = 0
 
         while True:
@@ -170,6 +176,7 @@ class AWClient:
                 if verbose:
                     print(f"{status_prefix} Model is not ready yet...")
             await asyncio.sleep(waiting_time)
+
 
     async def _is_model_done(self, model_id: str, endpoint: str) -> bool:
         res = await self.get_model(model_id)

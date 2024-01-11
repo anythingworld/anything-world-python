@@ -27,8 +27,9 @@ response = await client.animate('./examples/cat', 'some_cat', 'cat', is_symmetri
 # Response has the model_id of the 3D model that our AI pipeline is currently animating
 model_id = response["model_id"]
 
-# Runs a long-polling loop, checking every 5 secs if the API is done animating the model
-animated_response = await client.get_animated_model(model_id, waiting_time=5)
+# Runs a long-polling loop, starting it only after 2 minutes and after that,
+# checking every 5 secs if the API is done animating the model
+animated_response = await client.get_animated_model(model_id, waiting_time=5, warmup_time=120)
 
 # Check if our AI pipeline is done animating the model
 is_finished = await client.is_animation_done(model_id)
