@@ -165,7 +165,12 @@ class AWClient:
         while True:
             attempt_count += 1
             status_prefix = f"Polling attempt #{attempt_count}."
-            model_json = await self.get_model(model_id)
+            try:
+                model_json = await self.get_model(model_id)
+            except Exception as e:
+                if verbose:
+                    print(f"{status_prefix} Error: {e}")
+                return
             if "stage" in model_json:
                 model_stage = model_json["stage"]
                 if model_stage == expected_stage:
