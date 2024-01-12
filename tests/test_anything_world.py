@@ -3,7 +3,25 @@ import pytest
 from context import anything_world as aw
 
 @pytest.mark.asyncio
-async def test_animate():
+async def test_send_model_name_to_anything():
+    client = aw.AWClient()
+    response = await client.anything(model_name="my cat")
+    assert response, 'No response from /anything endpoint'
+    model_id = response["_id"]
+    assert model_id, 'No model id in response'
+
+
+@pytest.mark.asyncio
+async def test_send_search_query_to_anything():
+    client = aw.AWClient()
+    response = await client.anything(search_query="cat")
+    assert response, 'No response from /anything endpoint'
+    model_id = response["_id"]
+    assert model_id, 'No model id in response'
+
+
+@pytest.mark.asyncio
+async def test_send_example_cat_to_animate():
     client = aw.AWClient()
     animate_response = await client.animate('./examples/cat', 'some_cat', 'cat', is_symmetric=True)
     assert animate_response, 'No response from /animate endpoint'
