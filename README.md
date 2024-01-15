@@ -5,34 +5,47 @@ Python library and CLI for Anything World API.
 # Installing
 
 ```bash
-pip install anythingworld
+pip install anything-world
 ```
 
 # Using
 
-First of all, edit the provided `env.example` file with the right API key and rename
-it to `.env`.
+First of all, create a new `.env` file with the right API key and URLs:
+
+```bash
+AW_API_KEY=<YOUR API KEY>
+AW_API_URL=https://api.anything.world
+AW_POLLING_URL=https://api.anything.world/user-processed-model
+```
 
 ## From Python
 
 ```python
-from anythingworld import AWClient
+import asyncio
+from anything_world import AWClient
 
 # Create a client to be able to query Anything World's API
 client = AWClient()
 
+# Search for 3D models of `cats`:
+response = asyncio.run(
+    client.find('cats'))
+
 # Upload files from ./examples/cat folder to be animated
-response = await client.animate('./examples/cat', 'some_cat', 'cat', is_symmetric=True)
+response = asyncio.run(
+    client.animate('./examples/cat', 'some_cat', 'cat', is_symmetric=True))
 
 # Response has the model_id of the 3D model that our AI pipeline is currently animating
 model_id = response["model_id"]
 
 # Runs a long-polling loop, starting it only after 2 minutes and after that,
 # checking every 5 secs if the API is done animating the model
-animated_response = await client.get_animated_model(model_id, waiting_time=5, warmup_time=120)
+animated_response = asyncio.run(
+    await client.get_animated_model(model_id, waiting_time=5, warmup_time=120))
 
 # Check if our AI pipeline is done animating the model
-is_finished = await client.is_animation_done(model_id)
+is_finished = asyncio.run(
+    client.is_animation_done(model_id))
 assert is_finished == True
 ```
 
@@ -49,8 +62,10 @@ anything
 You can do exactly the same we did in Python before through the CLI:
 
 ```bash
+anything find <QUERY STRING>
 anything animate ./examples/cat "some cat" "cat" --is_symmetric
 anything get_animated_model <MODEL_ID>
+...
 ```
 
 # Developing
@@ -76,8 +91,9 @@ pytest -v -s
 Bump the version in `pyproject.toml` and then:
 
 ```bash
-python -m build
-twine upload dist/anything-world-<x.y.z>.tar.gz
+rm -rf dist/*
+python3 -m build
+python3 -m twine upload dist/*
 ```
 
 # License
