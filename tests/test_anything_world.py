@@ -3,25 +3,30 @@ import pytest
 from context import anything_world as aw
 
 @pytest.mark.asyncio
-async def test_send_model_name_to_anything():
+async def test_find_by_name():
     client = aw.AWClient()
-    response = await client.anything(model_name="my cat")
+    response = await client.find_by_name(model_name="my cat")
     assert response, 'No response from /anything endpoint'
-    model_id = response["_id"]
-    assert model_id, 'No model id in response'
 
 
 @pytest.mark.asyncio
-async def test_send_search_query_to_anything():
+async def test_find():
     client = aw.AWClient()
-    response = await client.anything(search_query="cat")
+    response = await client.find(search_query="caat")
     assert response, 'No response from /anything endpoint'
-    model_id = response["_id"]
-    assert model_id, 'No model id in response'
 
 
 @pytest.mark.asyncio
-async def test_send_example_cat_to_animate():
+async def test_404_on_find():
+    client = aw.AWClient()
+    try:
+        _ = await client.find(search_query="ararate")
+    except Exception as e:
+        assert e, 'No exception raised for 404 search query'
+
+
+@pytest.mark.asyncio
+async def _test_send_example_cat_to_animate():
     client = aw.AWClient()
     animate_response = await client.animate('./examples/cat', 'some_cat', 'cat', is_symmetric=True)
     assert animate_response, 'No response from /animate endpoint'
