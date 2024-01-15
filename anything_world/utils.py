@@ -112,6 +112,10 @@ async def send_request(url: str,
         else:
             res = await session.post(url, **kwargs)
         if res.content_type == "application/json":
-            return await res.json()
+            content = await res.json()
+            if res.status in [200, 403]:
+                return content
+            if res.status in [400, 404]:
+                raise Exception(f"{content['code']}: {content['message']}.")
         else:
-            raise Exception(f"Unexpected response content type: {res.content_type}")
+            raise Exception(f"Unexpected response content type: {res.content_type}.")
