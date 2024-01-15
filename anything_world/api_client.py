@@ -36,8 +36,62 @@ class AWClient:
         load_dotenv()
         self.api_key = api_key if api_key else get_env('AW_API_KEY')
         self.api_url = get_env('AW_API_URL')
-        self.api_key = get_env('AW_API_KEY')
         self.polling_url = get_env('AW_POLLING_URL')
+
+
+    async def _anything(
+            self,
+            model_name: Optional[str] = None,
+            search_query: Optional[str] = None,
+            fuzzy: Optional[bool] = True,
+            ) -> dict:
+        """
+        Asynchronously queries the Anything World API for a given model name or search query.
+
+        :param model_name: str, optional, the name of the model to query.
+        :param search_query: str, optional, the search query to query.
+        :param fuzzy: bool, optional (default: true), whether to perform fuzzy/approximate matching of
+            the query with the database entries' fields, using a custom implementation
+            of the edit distance algorithm.
+        :return: dict, the JSON response from the API decoded as a dict.
+        """
+        # Required params
+        data = {
+            "key": self.api_key,
+        }
+        # Optional params
+        if model_name:
+            data["name"] = model_name
+        if search_query:
+            data["search"] = search_query
+        if fuzzy:
+            data["fuzzy"] = str(fuzzy).lower()
+
+        return await send_request(
+            url=f"{self.api_url}/anything",
+            method="GET",
+            params=data
+        )
+
+
+    async def find_by_name(self, model_name: str) -> dict:
+        """
+        Asynchronously queries the Anything World API for a given model name.
+
+        :param model_name: str, the name of the model to query.
+        :return: dict, the JSON response from the API decoded as a dict.
+        """
+        return await self._anything(model_name=model_name)
+
+
+    async def find(self, search_query: str) -> dict:
+        """
+        Asynchronously queries the Anything World API for a given search query.
+
+        :param search_query: str, the search query to query.
+        :return: dict, the JSON response from the API decoded as a dict.
+        """
+        return await self._anything(search_query=search_query)
 
 
     async def animate(
