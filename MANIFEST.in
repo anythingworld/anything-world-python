@@ -1,0 +1,10 @@
+include README.md
+include LICENSE
+include MANIFEST.in
+include setup.cfg
+include pyproject.toml
+include env.example
+include anything_world/__init__.py
+include anything_world/api_client.py
+include anything_world/utils.py
+include scripts/cli.py
