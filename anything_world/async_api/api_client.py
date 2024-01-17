@@ -37,6 +37,11 @@ class AWClient:
         self.api_key = api_key if api_key else get_env('AW_API_KEY')
         self.api_url = get_env('AW_API_URL')
         self.polling_url = get_env('AW_POLLING_URL')
+        try:
+            mode = get_env('AW_MODE')
+            self.is_staging = mode == 'staging'
+        except Exception:
+            self.is_staging = False
 
 
     async def _anything(
@@ -57,8 +62,10 @@ class AWClient:
         """
         # Required params
         data = {
-            "key": self.api_key,
+            "key": self.api_key
         }
+        if self.is_staging:
+            data["staging"] = "true"
         # Optional params
         if model_name:
             data["name"] = model_name
@@ -120,10 +127,12 @@ class AWClient:
             "symmetry": "true" if is_symmetric else "false"
         }
         form_data = create_form_data(read_files(files_dir), data)
+        params = {"staging": "true"} if self.is_staging else {}
         return await send_request(
-            url=f"{self.api_url}/run_all",
+            url=f"{self.api_url}/animate",
             method="POST",
-            data=form_data
+            data=form_data,
+            params=params
         )
 
 
@@ -178,8 +187,9 @@ class AWClient:
             'key': self.api_key,
             'id': model_id,
             'stage': 'done',
-            'staging': 'true'
         }
+        if self.is_staging:
+            params["staging"] = "true"
         res = await send_request(
             url=self.polling_url,
             method="GET",

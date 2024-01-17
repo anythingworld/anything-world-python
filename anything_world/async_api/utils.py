@@ -115,7 +115,9 @@ async def send_request(url: str,
             content = await res.json()
             if res.status in [200, 403]:
                 return content
-            if res.status in [400, 404]:
+            if "code" in content and "message" in content:
                 raise Exception(f"{content['code']}: {content['message']}.")
+            else:
+                raise Exception(f"Unexpected response: {content}.")
         else:
             raise Exception(f"Unexpected response content type: {res.content_type}.")
