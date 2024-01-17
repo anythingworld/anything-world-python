@@ -3,7 +3,7 @@
 Python library and CLI for Anything World API.
 
 For more information of what changed between versions, please check the
-[](CHANGELOG.md) file.
+[CHANGELOG](./CHANGELOG.md) file.
 
 # Installing
 
