@@ -1,52 +1,7 @@
-import os
 import aiohttp
 import aiofiles
-import magic
+
 from typing import Optional
-
-
-def get_env(key: str) -> Optional[str]:
-    """
-    Retrieves the value of an environment variable.
-
-    This function retrieves the value of the specified environment variable. If the environment variable is not set,
-    it raises an exception.
-
-    :param key: str, the name of the environment variable.
-    :return: str, optional, the value of the environment variable, or None if the environment variable is not set.
-    :raises Exception: If the environment variable is not set.
-    """
-    value = os.getenv(key)
-    if not value:
-        raise Exception(f"Environment variable {key} is not set")
-    return value
-
-
-def read_files(files_dir: str) -> list:
-    """
-    Read files from a directory (or single file), returning a tuple with
-    filename, full path to file and its mimetype (inferred by its
-    extension-only for now).
-
-    :param files_dir: str, path to asset directory (or single asset file)
-    :return: list, files as tuples (file name, local path, mime type)
-    """
-    files_to_get = []
-    if os.path.isdir(files_dir):
-        files_to_get = os.listdir(files_dir)
-    else:
-        files_to_get = [files_dir]
-    files = []
-    for filename in files_to_get:
-        if filename == files_dir:
-            file_path = filename
-        else:
-            file_path = os.path.join(files_dir, filename)
-        mime = magic.Magic(mime=True)
-        mimetype = mime.from_buffer(open(file_path, "rb").read(4096))
-        files.append((os.path.basename(file_path), file_path, mimetype))
-    return files
-
 
 def create_form_data(files: list, key_value_data: dict) -> aiohttp.FormData:
     """

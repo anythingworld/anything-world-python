@@ -3,7 +3,8 @@ import time
 from typing import Optional
 from dotenv import load_dotenv
 
-from .utils import get_env, read_files, create_form_data, send_request
+from ..utils import get_env, read_files
+from .utils import create_form_data, send_request
 
 
 class AWClient:

@@ -1,50 +1,6 @@
-import os
 import requests
-import magic
+
 from typing import Optional
-
-
-def get_env(key: str) -> Optional[str]:
-    """
-    Retrieves the value of an environment variable.
-
-    This function retrieves the value of the specified environment variable. If the environment variable is not set,
-    it raises an exception.
-
-    :param key: str, the name of the environment variable.
-    :return: str, optional, the value of the environment variable, or None if the environment variable is not set.
-    :raises Exception: If the environment variable is not set.
-    """
-    value = os.getenv(key)
-    if not value:
-        raise Exception(f"Environment variable {key} is not set")
-    return value
-
-
-def read_files(files_dir: str) -> list:
-    """
-    Read files from a directory (or single file), returning a tuple with
-    filename, full path to file and its mimetype (inferred by its
-    extension-only for now).
-
-    :param files_dir: str, path to asset directory (or single asset file)
-    :return: list, files as tuples (file name, local path, mime type)
-    """
-    files_to_get = []
-    if os.path.isdir(files_dir):
-        files_to_get = os.listdir(files_dir)
-    else:
-        files_to_get = [files_dir]
-    files = []
-    for filename in files_to_get:
-        if filename == files_dir:
-            file_path = filename
-        else:
-            file_path = os.path.join(files_dir, filename)
-        mime = magic.Magic(mime=True)
-        mimetype = mime.from_buffer(open(file_path, "rb").read(4096))
-        files.append((os.path.basename(file_path), file_path, mimetype))
-    return files
 
 
 def create_form_data(files: list, key_value_data: dict) -> dict:
@@ -60,34 +16,10 @@ def create_form_data(files: list, key_value_data: dict) -> dict:
     """
     data = []
     for filename, filepath, mimetype in files:
-        #data[filename] = (filename, open(filepath, 'rb'), mimetype)
         data.append(('files', (filename, open(filepath, 'rb'), mimetype)))
     for key, value in key_value_data.items():
         data[key] = (None, value)
     return data
-
-
-# def create_form_data(files: list, key_value_data: dict) -> aiohttp.FormData:
-#     """
-#     Create an instance of `aiohttp.FormData` encoding files (with the
-#     right filename and content type) and key-value data, provided as a dict.
-
-#     :param files: list, asset files represented as tuple like
-#         (filename, filepath, mimetype)
-#     :param key_value_data: dict, representing key-value pairs to encode as
-#         form-data fields
-#     :return: FormData, data to be sent as form-data
-#     """
-#     data = aiohttp.FormData()
-#     for filename, filepath, mimetype in files:
-#         data.add_field(
-#             filename,
-#             open(filepath, 'rb'),
-#             filename=filename,
-#             content_type=mimetype)
-#     for key, value in key_value_data.items():
-#         data.add_field(key, value)
-#     return data
 
 
 def download_file(url: str, file_path: str):
