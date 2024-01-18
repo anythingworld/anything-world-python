@@ -2,6 +2,13 @@
 
 Python library and CLI for Anything World API.
 
+:warning: Please make sure to follow [our guidelines](https://anything-world.gitbook.io/anything-world/api/preparing-your-3d-model)
+on preparing your 3D model for success before sending them to be animated,
+by using our `/animate` endpoint.
+
+For more information of what changed between versions, please check the
+[CHANGELOG](./CHANGELOG.md) file.
+
 # Installing
 
 ```bash
@@ -20,9 +27,43 @@ AW_POLLING_URL=https://api.anything.world/user-processed-model
 
 ## From Python
 
+This library provides both synchronous and asynchronous implementations.
+The sync implementation is based on `requests` and tries to keep dependencies
+at minimum (i.e. no need to install `asyncio` nor `aiohttp`). However,
+if you use-case requires async calls, please follow the next section for its
+implementation.
+
+## Sync
+
+```python
+from anything_world.sync_api import AWClient
+
+# Create a client to be able to query Anything World's API
+client = AWClient()
+
+# Search for 3D models of `cats`:
+response = client.find('cats')
+
+# Upload files from ./examples/cat folder to be animated
+response = client.animate('./examples/cat', 'some_cat', 'cat', is_symmetric=True)
+
+# Response has the model_id of the 3D model that our AI pipeline is currently animating
+model_id = response["model_id"]
+
+# Runs a long-polling loop, starting it only after 2 minutes and after that,
+# checking every 5 secs if the API is done animating the model
+animated_response = client.get_animated_model(model_id, waiting_time=5, warmup_time=120)
+
+# Check if our AI pipeline is done animating the model
+is_finished = client.is_animation_done(model_id)
+assert is_finished == True
+```
+
+## Async
+
 ```python
 import asyncio
-from anything_world import AWClient
+from anything_world.async_api import AWClient
 
 # Create a client to be able to query Anything World's API
 client = AWClient()
@@ -41,7 +82,7 @@ model_id = response["model_id"]
 # Runs a long-polling loop, starting it only after 2 minutes and after that,
 # checking every 5 secs if the API is done animating the model
 animated_response = asyncio.run(
-    await client.get_animated_model(model_id, waiting_time=5, warmup_time=120))
+    client.get_animated_model(model_id, waiting_time=5, warmup_time=120))
 
 # Check if our AI pipeline is done animating the model
 is_finished = asyncio.run(
