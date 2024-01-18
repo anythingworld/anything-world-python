@@ -2,6 +2,10 @@
 
 Python library and CLI for Anything World API.
 
+:warning: Please make sure to follow [our guidelines](https://anything-world.gitbook.io/anything-world/)
+on preparing your 3D model for success before sending them to be animated,
+by using our `/animate` endpoint.
+
 For more information of what changed between versions, please check the
 [CHANGELOG](./CHANGELOG.md) file.
 
