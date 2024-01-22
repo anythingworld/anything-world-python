@@ -29,7 +29,7 @@ class AWClient:
             # In this stage, basic formats are already generated
             "default": "thumbnails_generation",
             # In this stage, extra formats are already generated
-            "extra_formats": "thumbnails_generation_finished"
+            "extra_formats": "formats_conversion_finished"
         }
     }
 
@@ -158,8 +158,8 @@ class AWClient:
         between each request.
 
         The request will look if the model is done animated and with the
-        basic formats only generated (`.glb`). If you want to wait until all
-        formats are generated as well (`.gltf`, `.fbx`, `.dae`), set the
+        basic formats only generated (`.glb`, `.fbx`). If you want to wait until all
+        formats are generated as well (`.gltf`, `.dae`), set the
         `extra_formats` param to `True`.   
 
         :param model_id: str, the ID of the model to retrieve.
@@ -185,8 +185,8 @@ class AWClient:
         This function sends a request to the API to check if the animation of the specified model is done.
 
         The request will look if the model is done animated and with the
-        basic formats only generated (`.glb`). If you want to wait until all
-        formats are generated as well (`.gltf`, `.fbx`, `.dae`), set the
+        basic formats only generated (`.glb`, `.fbx`). If you want to wait until all
+        formats are generated as well (`.gltf`, `.dae`), set the
         `extra_formats` param to `True`.   
 
         :param model_id: str, the ID of the model to check.

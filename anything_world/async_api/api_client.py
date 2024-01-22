@@ -28,7 +28,7 @@ class AWClient:
             # In this stage, basic formats are already generated
             "default": "thumbnails_generation",
             # In this stage, extra formats are already generated
-            "extra_formats": "thumbnails_generation_finished"
+            "extra_formats": "formats_conversion_finished"
         }
     }
 
