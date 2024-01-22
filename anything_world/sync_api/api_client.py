@@ -26,10 +26,16 @@ class AWClient:
     # Stage names that identify the end of a process for a given endpoint name
     _finished_stages = {
         "animate": {
-            # In this stage, basic formats are already generated
-            "default": "thumbnails_generation",
-            # In this stage, extra formats are already generated
-            "extra_formats": "formats_conversion_finished"
+            # In these stages, basic formats are already generated
+            "default": [
+                "format_conversion",
+                "thumbnails_generation",
+                "migrate_animation_finished"
+            ],
+            # In these stages, extra formats are already generated
+            "extra_formats": [
+                "formats_conversion_finished"
+            ]
         }
     }
 
@@ -173,7 +179,7 @@ class AWClient:
         expected_formats = "extra_formats" if extra_formats else "default"
         return self.get_model_by_polling(
             model_id,
-            expected_stage=self._finished_stages["animate"][expected_formats],
+            expected_stages=self._finished_stages["animate"][expected_formats],
             waiting_time=waiting_time,
             verbose=verbose)
 
@@ -226,7 +232,7 @@ class AWClient:
     def get_model_by_polling(
             self,
             model_id: str,
-            expected_stage: str,
+            expected_stages: list,
             waiting_time: Optional[int] = 5,
             warmup_time: Optional[int] = 0,
             verbose: Optional[bool] = False) -> dict:
@@ -237,7 +243,8 @@ class AWClient:
         reaches the expected stage, waiting a specified amount of time between each request.
 
         :param model_id: str, the ID of the model to retrieve.
-        :param expected_stage: str, the stage that the model is expected to reach.
+        :param expected_stages: list, the possible stages that the model is expected to reach to
+            be considered done.
         :param waiting_time: int, optional, the amount of time to wait between each request in seconds. Defaults to 5.
         :param warmup_time: int, optional, the amount of time to wait before sending the first request in seconds.
             This is useful specially for users with low connectivity, to avoid unnecessary requests, given that for
@@ -261,7 +268,7 @@ class AWClient:
                 return
             if "stage" in model_json:
                 model_stage = model_json["stage"]
-                if model_stage == expected_stage:
+                if model_stage in expected_stages:
                     if verbose:
                         print(f"{status_prefix} Done.")
                     return model_json
@@ -282,9 +289,9 @@ class AWClient:
         :return: bool, True if the model is done, False otherwise.
         """
         required_formats = "extra_formats" if extra_formats else "default"
-        expected_stage = self._finished_stages[endpoint][required_formats]
+        expected_stages = self._finished_stages[endpoint][required_formats]
         res = self.get_model(model_id)
         if "stage" in res:
-            return res["stage"] == expected_stage
+            return res["stage"] in expected_stages
         return False
 
