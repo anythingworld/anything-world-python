@@ -161,6 +161,11 @@ class AWClient:
         reaches the finished stage expected for the /animate endpoint, waiting a specified amount of time
         between each request.
 
+        The request will look if the model is done animated and with the
+        basic formats only generated (`.glb`, `.fbx`). If you want to wait until all
+        formats are generated as well (`.gltf`, `.dae`), set the
+        `extra_formats` param to `True`.   
+
         :param model_id: str, the ID of the model to retrieve.
         :param extra_formats: bool, optional, a flag indicating if the model
             should have extra formats in the response or not. Defaults to False.
@@ -184,8 +189,8 @@ class AWClient:
         This function sends a request to the API to check if the animation of the specified model is done.
 
         The request will look if the model is done animated and with the
-        basic formats only generated (`.glb`). If you want to wait until all
-        formats are generated as well (`.gltf`, `.fbx`, `.dae`), set the
+        basic formats only generated (`.glb`, `.fbx`). If you want to wait until all
+        formats are generated as well (`.gltf`, `.dae`), set the
         `extra_formats` param to `True`.   
 
         :param model_id: str, the ID of the model to check.
