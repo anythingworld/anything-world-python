@@ -40,3 +40,19 @@ async def _test_async_send_example_cat_to_animate():
 
     is_finished = await client.is_animation_done(model_id)
     assert is_finished
+
+
+@pytest.mark.asyncio
+async def _test_async_send_example_cat_for_extra_formats_to_animate():
+    client = async_api.AWClient()
+    animate_response = await client.animate('./examples/cat', 'some_cat', 'cat', is_symmetric=True)
+    assert animate_response, 'No response from /animate endpoint'
+    model_id = animate_response["model_id"]
+    is_finished = await client.is_animation_done(model_id, extra_formats=True)
+    assert not is_finished, 'Model is finished before polling'
+
+    animated_response = await client.get_animated_model(model_id, extra_formats=True)
+    assert animated_response, 'No response from polling endpoint'
+
+    is_finished = await client.is_animation_done(model_id, extra_formats=True)
+    assert is_finished
