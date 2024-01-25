@@ -56,43 +56,6 @@ class AWClient:
             self.is_staging = False
 
 
-    async def _anything(
-            self,
-            model_name: Optional[str] = None,
-            search_query: Optional[str] = None,
-            fuzzy: Optional[bool] = True,
-            ) -> dict:
-        """
-        Asynchronously queries the Anything World API for a given model name or search query.
-
-        :param model_name: str, optional, the name of the model to query.
-        :param search_query: str, optional, the search query to query.
-        :param fuzzy: bool, optional (default: true), whether to perform fuzzy/approximate matching of
-            the query with the database entries' fields, using a custom implementation
-            of the edit distance algorithm.
-        :return: dict, the JSON response from the API decoded as a dict.
-        """
-        # Required params
-        data = {
-            "key": self.api_key
-        }
-        if self.is_staging:
-            data["staging"] = "true"
-        # Optional params
-        if model_name:
-            data["name"] = model_name
-        if search_query:
-            data["search"] = search_query
-        if fuzzy:
-            data["fuzzy"] = str(fuzzy).lower()
-
-        return await send_request(
-            url=f"{self.api_url}/anything",
-            method="GET",
-            params=data
-        )
-
-
     async def find_by_name(self, model_name: str) -> dict:
         """
         Asynchronously queries the Anything World API for a given model name.
@@ -175,7 +138,7 @@ class AWClient:
         :return: dict, the JSON response from the API decoded as a dict.
         """
         expected_formats = "extra_formats" if extra_formats else "default"
-        return await self.get_model_by_polling(
+        return await self._get_model_by_polling(
             model_id,
             expected_stages=self._finished_stages["animate"][expected_formats],
             waiting_time=waiting_time,
@@ -227,7 +190,44 @@ class AWClient:
         return res
 
 
-    async def get_model_by_polling(
+    async def _anything(
+            self,
+            model_name: Optional[str] = None,
+            search_query: Optional[str] = None,
+            fuzzy: Optional[bool] = True,
+            ) -> dict:
+        """
+        Asynchronously queries the Anything World API for a given model name or search query.
+
+        :param model_name: str, optional, the name of the model to query.
+        :param search_query: str, optional, the search query to query.
+        :param fuzzy: bool, optional (default: true), whether to perform fuzzy/approximate matching of
+            the query with the database entries' fields, using a custom implementation
+            of the edit distance algorithm.
+        :return: dict, the JSON response from the API decoded as a dict.
+        """
+        # Required params
+        data = {
+            "key": self.api_key
+        }
+        if self.is_staging:
+            data["staging"] = "true"
+        # Optional params
+        if model_name:
+            data["name"] = model_name
+        if search_query:
+            data["search"] = search_query
+        if fuzzy:
+            data["fuzzy"] = str(fuzzy).lower()
+
+        return await send_request(
+            url=f"{self.api_url}/anything",
+            method="GET",
+            params=data
+        )
+
+
+    async def _get_model_by_polling(
             self,
             model_id: str,
             expected_stages: list,
@@ -276,7 +276,11 @@ class AWClient:
             await asyncio.sleep(waiting_time)
 
 
-    async def _is_model_done(self, model_id: str, endpoint: str) -> bool:
+    async def _is_model_done(
+            self,
+            model_id: str,
+            endpoint: str,
+            extra_formats: bool=False) -> bool:
         """
         Check if a model is done for a given endpoint.
 
