@@ -1,4 +1,4 @@
-from anything_world.async_api import AWClient
+from anything_world.sync_api import AWClient
 import fire
 
 def main():
