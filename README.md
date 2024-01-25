@@ -52,11 +52,14 @@ model_id = response["model_id"]
 
 # Runs a long-polling loop, starting it only after 2 minutes and after that,
 # checking every 5 secs if the API is done animating the model
-animated_response = client.get_animated_model(model_id, waiting_time=5, warmup_time=120)
+model_data = client.get_animated_model(model_id, waiting_time=5, warmup_time=120)
 
 # Check if our AI pipeline is done animating the model
 is_finished = client.is_animation_done(model_id)
 assert is_finished == True
+
+# Gets all model data
+model_data = client.get_model(model_id)
 ```
 
 ## Async
@@ -80,14 +83,18 @@ response = asyncio.run(
 model_id = response["model_id"]
 
 # Runs a long-polling loop, starting it only after 2 minutes and after that,
-# checking every 5 secs if the API is done animating the model
-animated_response = asyncio.run(
+# checking every 5 secs if the API is done animating the model.
+model_data = asyncio.run(
     client.get_animated_model(model_id, waiting_time=5, warmup_time=120))
 
 # Check if our AI pipeline is done animating the model
 is_finished = asyncio.run(
     client.is_animation_done(model_id))
 assert is_finished == True
+
+# Gets all model data
+model_data = async.run(
+    client.get_model(model_id))
 ```
 
 ## From CLI
@@ -103,10 +110,24 @@ anything
 You can do exactly the same we did in Python before through the CLI:
 
 ```bash
-anything find <QUERY STRING>
+anything find "cat"
 anything animate ./examples/cat "some cat" "cat" --is_symmetric
-anything get_animated_model <MODEL_ID>
-...
+anything get_animated_model <MODEL_ID> --verbose
+anything get_model <MODEL_ID>
+```
+
+To know more about the parameters of a specific command, just run the
+command with no arguments to get a help message:
+
+```bash
+anything find
+```
+
+For more information about a command, please run the command with the `--help`
+suffix:
+
+```bash
+anything find --help
 ```
 
 # Developing
@@ -129,7 +150,7 @@ pytest -v -s
 
 ## Releasing a new pip package
 
-Bump the version in `pyproject.toml` and then:
+First bump the version in `pyproject.toml` and then:
 
 ```bash
 rm -rf dist/*
