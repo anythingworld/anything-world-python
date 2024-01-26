@@ -2,9 +2,18 @@
 
 Python library and CLI for Anything World API.
 
-:warning: Please make sure to follow [our guidelines](https://anything-world.gitbook.io/anything-world/api/preparing-your-3d-model)
-on preparing your 3D model for success before sending them to be animated,
-by using our `/animate` endpoint.
+To use this package you'll need to obtain a valid Anything World API key.
+Please, create an account in
+[our website](https://app.anything.world/register) and then visit
+[your profile page](https://app.anything.world/profile) to
+get access to your API key.
+
+Before sending your 3D models to be animated, please make sure to follow [our guidelines](https://anything-world.gitbook.io/anything-world/api/preparing-your-3d-model)
+on preparing your 3D model for success.
+
+To understand better the underlying web requests called by this
+Python package, please check our
+[API documentation](https://anything-world.gitbook.io/anything-world/api/rest-api-references).
 
 For more information of what changed between versions, please check the
 [CHANGELOG](./CHANGELOG.md) file.
