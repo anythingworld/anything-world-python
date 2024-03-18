@@ -2,9 +2,18 @@
 
 Python library and CLI for Anything World API.
 
-:warning: Please make sure to follow [our guidelines](https://anything-world.gitbook.io/anything-world/api/preparing-your-3d-model)
-on preparing your 3D model for success before sending them to be animated,
-by using our `/animate` endpoint.
+To use this package you'll need to obtain a valid Anything World API key.
+Please, create an account in
+[our website](https://app.anything.world/register) and then visit
+[your profile page](https://app.anything.world/profile) to
+get access to your API key.
+
+Before sending your 3D models to be animated, please make sure to follow [our guidelines](https://anything-world.gitbook.io/anything-world/api/preparing-your-3d-model)
+on preparing your 3D model for success.
+
+To understand better the underlying web requests called by this
+Python package, please check our
+[API documentation](https://anything-world.gitbook.io/anything-world/api/rest-api-references).
 
 For more information of what changed between versions, please check the
 [CHANGELOG](./CHANGELOG.md) file.
@@ -45,14 +54,24 @@ client = AWClient()
 response = client.find('cats')
 
 # Upload files from ./examples/cat folder to be animated
-response = client.animate('./examples/cat', 'some_cat', 'cat', is_symmetric=True)
+response = client.animate(
+    files_dir='./examples/cat',
+    model_name='some_cat',
+    model_type='cat',
+    is_symmetric=True
+)
 
 # Response has the model_id of the 3D model that our AI pipeline is currently animating
 model_id = response["model_id"]
 
-# Runs a long-polling loop, starting it only after 2 minutes and after that,
+# Runs a long-polling loop, starting it only after 10 seconds and after that,
 # checking every 5 secs if the API is done animating the model
-model_data = client.get_animated_model(model_id, waiting_time=5, warmup_time=120)
+model_data = client.get_animated_model(
+    model_id=model_id,
+    waiting_time=5,
+    warmup_time=10,
+    verbose=True
+)
 
 # Check if our AI pipeline is done animating the model
 is_finished = client.is_animation_done(model_id)
@@ -60,41 +79,6 @@ assert is_finished == True
 
 # Gets all model data
 model_data = client.get_model(model_id)
-```
-
-## Async
-
-```python
-import asyncio
-from anything_world.async_api import AWClient
-
-# Create a client to be able to query Anything World's API
-client = AWClient()
-
-# Search for 3D models of `cats`:
-response = asyncio.run(
-    client.find('cats'))
-
-# Upload files from ./examples/cat folder to be animated
-response = asyncio.run(
-    client.animate('./examples/cat', 'some_cat', 'cat', is_symmetric=True))
-
-# Response has the model_id of the 3D model that our AI pipeline is currently animating
-model_id = response["model_id"]
-
-# Runs a long-polling loop, starting it only after 2 minutes and after that,
-# checking every 5 secs if the API is done animating the model.
-model_data = asyncio.run(
-    client.get_animated_model(model_id, waiting_time=5, warmup_time=120))
-
-# Check if our AI pipeline is done animating the model
-is_finished = asyncio.run(
-    client.is_animation_done(model_id))
-assert is_finished == True
-
-# Gets all model data
-model_data = async.run(
-    client.get_model(model_id))
 ```
 
 ## From CLI
