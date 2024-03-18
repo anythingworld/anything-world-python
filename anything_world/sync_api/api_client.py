@@ -28,8 +28,8 @@ class AWClient:
         "animate": {
             # In these stages, basic formats are already generated
             "default": [
-                "format_conversion",
-                "thumbnails_generation",
+                "thumbnails_generation_finished",
+                "formats_conversion_finished",
                 "migrate_animation_finished"
             ],
             # In these stages, extra formats are already generated
@@ -118,6 +118,7 @@ class AWClient:
             model_id: str,
             extra_formats: bool = False,
             waiting_time: Optional[int] = 5,
+            warmup_time: Optional[int] = 0,
             verbose: Optional[bool] = False) -> dict:
         """
         Retrieves an animated model by polling.
@@ -135,6 +136,9 @@ class AWClient:
         :param extra_formats: bool, optional, a flag indicating if the model
             should have extra formats in the response or not. Defaults to False.
         :param waiting_time: int, optional, the amount of time to wait between each request in seconds. Defaults to 5.
+        :param warmup_time: int, optional, the amount of time to wait before sending the first request in seconds.
+            This is useful specially for users with low connectivity, to avoid unnecessary requests, given that for
+            some models the API takes a while to the model ready. Defaults to 0.  
         :param verbose: bool, optional, a flag indicating whether to print detailed information about each request.
             Defaults to False.
         :return: dict, the JSON response from the API decoded as a dict.
@@ -144,6 +148,7 @@ class AWClient:
             model_id,
             expected_stages=self._finished_stages["animate"][expected_formats],
             waiting_time=waiting_time,
+            warmup_time=warmup_time,
             verbose=verbose)
 
 
@@ -274,7 +279,7 @@ class AWClient:
                     return model_json
             else:
                 if verbose:
-                    print(f"{status_prefix} Model is not ready yet...")
+                    print(f"{status_prefix} Model {model_id} is not ready yet...")
             time.sleep(waiting_time)
 
 
