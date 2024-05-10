@@ -46,6 +46,8 @@ implementation.
 
 ```python
 from anything_world.sync_api import AWClient
+from dotenv import load_dotenv
+load_dotenv()
 
 # Create a client to be able to query Anything World's API
 client = AWClient()
