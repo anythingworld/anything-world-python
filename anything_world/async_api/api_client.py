@@ -96,10 +96,11 @@ class AWClient:
         :return: dict, the JSON response from the API decoded as a dict.
         """
         data = {
-            "api_key": self.api_key,
+            "key": self.api_key,
             "model_name": model_name,
             "model_type": model_type,
-            "symmetry": "true" if is_symmetric else "false"
+            "symmetry": "true" if is_symmetric else "false",
+            "platform": "python"
         }
         form_data = create_form_data(read_files(files_dir), data)
         params = {"staging": "true"} if self.is_staging else {}
