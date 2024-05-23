@@ -141,7 +141,7 @@ First bump the version in `pyproject.toml` and then:
 ```bash
 rm -rf dist/*
 python3 -m build
-python3 -m twine upload dist/*
+python3 -m twine upload dist/* --username __token__ --password <password>
 ```
 
 # License
