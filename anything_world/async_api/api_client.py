@@ -80,7 +80,8 @@ class AWClient:
             self,
             files_dir: str,
             model_name: str,
-            model_type: str,
+            model_type: str = None,
+            auto_rotate: bool = True,
             is_symmetric: bool = True) -> dict:
         """
         Asynchronously sends a request to animate a model.
@@ -90,7 +91,10 @@ class AWClient:
 
         :param files_dir: str, the directory where the files to be animated are located.
         :param model_name: str, the name of the model to be animated.
-        :param model_type: str, the type of the model to be animated.
+        :param model_type: str, optional, the type of the model to be animated. If not given, it will set the
+            `auto_classify` request parameter as "true", allowing the AI to find the model type automatically.
+        :param auto_rotate: bool, optional, if the AI should automatically fix rotation of the model or not.
+            Defaults to True.
         :param is_symmetric: bool, optional, a flag indicating whether the model is symmetric. Defaults to True.
 
         :return: dict, the JSON response from the API decoded as a dict.
@@ -100,8 +104,14 @@ class AWClient:
             "model_name": model_name,
             "model_type": model_type,
             "symmetry": "true" if is_symmetric else "false",
+            "auto_rotate": "true" if auto_rotate else "false",
             "platform": "python"
         }
+        if model_type:
+            data["model_type"] = model_type
+            data["auto_classify"] = "false"
+        else:
+            data["auto_classify"] = "true"
         form_data = create_form_data(read_files(files_dir), data)
         params = {"staging": "true"} if self.is_staging else {}
         return await send_request(

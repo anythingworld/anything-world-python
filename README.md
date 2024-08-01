@@ -60,8 +60,17 @@ response = client.animate(
     files_dir='./examples/cat',
     model_name='some_cat',
     model_type='cat',
+    auto_rotate=True,
     is_symmetric=True
 )
+
+# If the `model_type` is not given, the AI pipeline will try to find it automatically!
+# response = client.animate(
+#     files_dir='./examples/cat',
+#     model_name='some_cat',
+#     auto_rotate=True,
+#     is_symmetric=True
+# )
 
 # Response has the model_id of the 3D model that our AI pipeline is currently animating
 model_id = response["model_id"]
@@ -97,7 +106,7 @@ You can do exactly the same we did in Python before through the CLI:
 
 ```bash
 anything find "cat"
-anything animate ./examples/cat "some cat" "cat" --is_symmetric
+anything animate ./examples/cat "some cat" --is_symmetric --auto_rotate
 anything get_animated_model <MODEL_ID> --verbose
 anything get_model <MODEL_ID>
 ```
