@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.8] - 2024-09-30
+
+- Add `auto_rotate: bool as str` and `auto_classify: bool as str` to `/animate`
+  requests
+- Add `auto_rotate: bool` as parameter into `animate()` function. Please note
+  that if no model type is given, the `auto_classify` parameter will be given
+  and set as `"true"` automatically
+
 ## [0.1.7] - 2024-05-23
 
 - Add `platform: "python"` parameter into requests to `/animate`, so we can
