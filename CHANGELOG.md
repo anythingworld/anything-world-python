@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2024-11-26
+
+- Add `generate_from_text()`, `generate_from_image()`, `generate_animated_from_text()`,
+  and `generate_animated_from_image()` functions. They make it possible to request
+  our APIs for generating (and animating) 3D models by giving only a text prompt or
+  an image file
+- Add `get_generated_model()` to be able to query generated models created by the
+  functions above
+
 ## [0.1.8] - 2024-09-30
 
 - Add `auto_rotate: bool as str` and `auto_classify: bool as str` to `/animate`
