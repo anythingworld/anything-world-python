@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "anything_world"
-version = "0.1.8"
+version = "0.2.0"
 authors = [
     {name = "Anything World", email = "support@anything.world"},
 ]
@@ -31,7 +31,6 @@ Homepage = "https://anything.world"
 
 [tool.setuptools.packages.find]
 include = ["anything_world*", "scripts*"]
-
 
 [project.scripts]
 anything = "scripts.cli:main"
