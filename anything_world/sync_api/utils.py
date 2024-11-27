@@ -38,10 +38,12 @@ def download_file(url: str, file_path: str):
                 f.write(chunk)
 
 
-def send_request(url: str,
-                       method: Optional[str] = "POST",
-                       request_timeout: Optional[int] = 500,
-                       **kwargs) -> dict:
+def send_request(
+        url: str,
+        method: Optional[str] = "POST",
+        request_timeout: Optional[int] = 500,
+        **kwargs
+    ) -> dict:
     """
     Sends a request to a URL.
 
@@ -52,18 +54,19 @@ def send_request(url: str,
     :param method: str, optional, the HTTP method to use. Defaults to "POST".
     :param request_timeout: int, optional, the total timeout for the request in seconds. Defaults to 500.
     :param kwargs: additional keyword arguments to pass to the request.
-    :return: dict, the JSON response from the server encoded as a dict.
+    :return: tuple, the response content and status code.
     :raises Exception: If the response content type is not "application/json".
     """
     if method == "GET":
         res = requests.get(url, **kwargs)
     else:
         res = requests.post(url, **kwargs)
+
     content_type = res.headers["content-type"]
     if "application/json" in content_type:
         content = res.json()
         if res.status_code in [200, 403]:
-            return content
+            return content, res.status_code
         if "code" in content and "message" in content:
             raise Exception(f"{content['code']}: {content['message']}.")
         else:

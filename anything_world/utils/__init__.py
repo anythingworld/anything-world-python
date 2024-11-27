@@ -1,5 +1,6 @@
 import os
 
+from uuid import uuid4
 from typing import Optional
 
 
@@ -67,6 +68,19 @@ def get_env(key: str) -> Optional[str]:
     return value
 
 
+def read_file(file_path: str) -> list:
+    """
+    Read file from a given path, returning a tuple with
+    filename, full path to file and its mimetype (inferred by its
+    extension-only for now).
+
+    :param file_path: str, path to file
+    :return: tuple, with (file name, local path, mime type)
+    """
+    mimetype = get_mimetype(file_path)
+    return (os.path.basename(file_path), file_path, mimetype)
+
+
 def read_files(files_dir: str) -> list:
     """
     Read files from a directory (or single file), returning a tuple with
@@ -87,7 +101,29 @@ def read_files(files_dir: str) -> list:
             file_path = filename
         else:
             file_path = os.path.join(files_dir, filename)
-        mimetype = get_mimetype(file_path)
-        files.append((os.path.basename(file_path), file_path, mimetype)) 
+        files.append(read_file(file_path))
     return files
 
+
+def create_folder(folder_path: str) -> str:
+    """
+    Create a folder if it does not exist.
+
+    :param folder_path: str, path to folder
+    :return: str, path to folder
+    """
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+    return folder_path
+
+
+def create_temporary_folder(suffix: str = None) -> str:
+    """
+    Create a temporary folder.
+
+    :return: str, path to temporary folder
+    """
+    if suffix:
+        return create_folder(f"/tmp/{suffix}")
+    uuid = str(uuid4())
+    return create_folder(f"/tmp/{uuid}")
